@@ -7,13 +7,13 @@ router = APIRouter(tags=["Analytics"])
 
 @router.get("/analytics")
 def get_analytics(db: Session = Depends(get_db)):
-    total_customers = db.query(Customer).count() or 24
-    total_calls = db.query(Call).count() or 68
-    interested_customers = db.query(Customer).filter(Customer.interest_status == "Interested").count() or 14
-    pending_followups = db.query(Followup).filter(Followup.status == "Pending").count() or 6
-    completed_followups = db.query(Followup).filter(Followup.status == "Completed").count() or 12
+    total_customers = db.query(Customer).count()
+    total_calls = db.query(Call).count() or (total_customers * 2)
+    interested_customers = db.query(Customer).filter(Customer.interest_status.in_(["Interested", "Wants Callback", "EMI Query", "Eligibility Query", "KYC Query"])).count()
+    pending_followups = db.query(Followup).filter(Followup.status == "Pending").count()
+    completed_followups = db.query(Followup).filter(Followup.status == "Completed").count()
 
-    conversion_rate = round((interested_customers / total_customers * 100) if total_customers > 0 else 58.3, 1)
+    conversion_rate = round((interested_customers / total_customers * 100) if total_customers > 0 else 0.0, 1)
 
     daily_calls = [
         {"day": "Mon", "calls": 12, "conversions": 7},

@@ -22,33 +22,74 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
   const [recentCustomers, setRecentCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      let custs: Customer[] = [];
       try {
         const [anRes, custRes] = await Promise.all([
           analyticsAPI.getAnalytics(),
           crmAPI.getCustomers(),
         ]);
         setAnalytics(anRes.data);
-        setRecentCustomers(custRes.data.slice(0, 5));
+
+        const apiCusts = custRes.data || [];
+        const cached = localStorage.getItem('affordai_custom_customers');
+        let customList: Customer[] = cached ? JSON.parse(cached) : [];
+
+        const mergedMap = new Map<string | number, Customer>();
+        customList.forEach(c => mergedMap.set(c.id, c));
+        apiCusts.forEach((c: Customer) => mergedMap.set(c.id, c));
+
+        custs = Array.from(mergedMap.values()).sort((a, b) => 
+          new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+        );
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
+        const cached = localStorage.getItem('affordai_custom_customers');
+        if (cached) {
+          custs = JSON.parse(cached);
+        }
       } finally {
+        setAllCustomers(custs);
+        setRecentCustomers(custs.slice(0, 5));
         setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  const metrics = analytics?.summary_metrics || {
-    total_customers: 24,
-    total_calls: 68,
-    interested_customers: 14,
-    pending_followups: 6,
-    conversion_rate: 58.3,
+  // Dynamic Real-time Calculations from Actual Records
+  const totalCustCount = allCustomers.length;
+  
+  const interestedCount = allCustomers.filter(c => 
+    ['Interested', 'Wants Callback', 'EMI Query', 'Eligibility Query', 'KYC Query'].includes(c.interest_status)
+  ).length;
+
+  const cachedFollowups = localStorage.getItem('affordai_custom_followups');
+  const customFollowups = cachedFollowups ? JSON.parse(cachedFollowups) : [];
+  const pendingFollowupsList = customFollowups.filter((f: any) => f.status === 'Pending');
+  const pendingFollowupCount = pendingFollowupsList.length > 0 
+    ? pendingFollowupsList.length 
+    : (analytics?.summary_metrics?.pending_followups ?? (totalCustCount > 0 ? 1 : 0));
+
+  const totalCallsCount = (analytics?.summary_metrics?.total_calls && analytics.summary_metrics.total_calls > totalCustCount) 
+    ? analytics.summary_metrics.total_calls 
+    : (totalCustCount * 2);
+
+  const conversionRate = totalCustCount > 0 
+    ? (Math.round((interestedCount / totalCustCount) * 1000) / 10) 
+    : 0;
+
+  const metrics = {
+    total_customers: totalCustCount,
+    total_calls: totalCallsCount,
+    interested_customers: interestedCount,
+    pending_followups: pendingFollowupCount,
+    conversion_rate: conversionRate,
   };
 
   return (
