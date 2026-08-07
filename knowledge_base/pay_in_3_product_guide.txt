@@ -1,0 +1,41 @@
+AFFORDAI PAY-IN-3 ZERO-COST EMI PRODUCT GUIDE
+
+1. PRODUCT OVERVIEW & BENEFITS
+AffordAI Pay-in-3 is a revolutionary zero-cost EMI payment product that allows customers to split any transaction between INR 3,000 and INR 1,500,000 into 3 equal monthly installments.
+- Interest Rate: 0% APR (Zero Interest).
+- Processing Fee: INR 0 (No hidden charges).
+- Down Payment: 1st installment paid at purchase time; 2nd installment at Day 30; 3rd installment at Day 60.
+- Instant Approval: Under 60 seconds with digital KYC.
+
+2. ELIGIBILITY CRITERIA
+- Minimum Age: 21 years old.
+- Maximum Age: 60 years old at loan maturity.
+- Employment: Salaried professionals (Min monthly salary: INR 25,000) or Self-Employed individuals (Min annual ITR: INR 3,00,000).
+- Credit Score: CIBIL score of 670 or higher (or equivalent Experian score).
+- Documentation: Valid PAN Card, Aadhaar Card linked with mobile number, and active bank account with NetBanking/UPI auto-debit capability.
+
+3. KYC & ONBOARDING PROCESS
+Step 1: Mobile verification via OTP.
+Step 2: Enter PAN details for instant credit limit calculation.
+Step 3: Perform Video KYC (V-KYC) or DigiLocker Aadhaar authentication.
+Step 4: Set up Auto-Debit (e-NACH / UPI Autopay) for seamless auto-repayments on due dates.
+Step 5: Transaction approval and instant voucher / merchant payment release.
+
+4. INTEREST & PENALTY POLICY
+- Zero Interest: No interest is charged if installments are paid on or before the due date.
+- Grace Period: 3 days grace period provided for monthly installments.
+- Late Payment Fee: INR 250 flat fee per missed installment after grace period expiration.
+- Foreclosure Charges: 0% foreclosure fee. Customers can prepay remaining installments anytime with zero penalty.
+
+5. FREQUENTLY ASKED QUESTIONS (FAQ)
+Q: Is there any hidden fee or interest for Pay-in-3?
+A: No! Pay-in-3 is 100% zero-cost. You pay exactly the item purchase price divided into 3 equal payments.
+
+Q: What happens if my payment fails on due date?
+A: You get a 3-day grace period to clear the due amount via UPI or Debit Card without any penalty.
+
+Q: Can I use Pay-in-3 for electronics, travel, and healthcare?
+A: Yes, Pay-in-3 is supported across partner merchants in Electronics, Smartphones, Home Appliances, Travel, Education, and Healthcare.
+
+Q: How can sales agents assist customers facing V-KYC drops?
+A: Agents can send an SMS / WhatsApp link to complete DigiLocker offline XML verification as a hassle-free alternative to V-KYC.

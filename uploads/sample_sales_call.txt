@@ -1,0 +1,8 @@
+Agent: Hello, good afternoon! Am I speaking with Mr. Rahul Sharma?
+Customer: Yes, speaking. Who is this?
+Agent: Hi Mr. Sharma, I am calling from AffordAI Financial Services. I noticed you were checking out a smartphone worth 45,000 rupees on our merchant app. I wanted to share that you are pre-approved for our Pay-in-3 Zero-Cost EMI product.
+Customer: Oh, Pay-in-3? How does that work? Are there any hidden interest charges or processing fees?
+Agent: Great question! Pay-in-3 has absolute zero interest and zero processing fee. You only pay 15,000 rupees today as the first installment, 15,000 next month, and 15,000 in the 3rd month.
+Customer: That sounds really good! What documents do I need to complete the KYC and get started?
+Agent: You just need your PAN card and Aadhaar linked to your mobile number. The digital KYC takes less than 60 seconds. Should I send you the instant approval link on WhatsApp?
+Customer: Yes please, send me the link. I will complete the KYC right away.
