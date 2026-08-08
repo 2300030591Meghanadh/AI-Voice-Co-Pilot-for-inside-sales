@@ -21,6 +21,8 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   login: (email: string, password: string) =>
     api.post('/login', { email, password }),
+  signup: (fullName: string, email: string, password: string) =>
+    api.post('/signup', { full_name: fullName, email, password }),
 };
 
 export const audioAPI = {

@@ -12,6 +12,12 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+class SignupRequest(BaseModel):
+    full_name: str
+    email: str
+    password: str
+    role: Optional[str] = "sales_agent"
+
 # Customer Schemas
 class CustomerBase(BaseModel):
     name: str
