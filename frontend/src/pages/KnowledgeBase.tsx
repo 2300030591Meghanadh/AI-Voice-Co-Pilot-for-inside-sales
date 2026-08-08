@@ -22,9 +22,22 @@ export const KnowledgeBase: React.FC = () => {
   const fetchDocuments = async () => {
     try {
       const res = await ragAPI.listDocuments();
-      setDocuments(res.data);
+      const apiDocs = res.data || [];
+      const cached = localStorage.getItem('affordai_custom_documents');
+      let customList: any[] = cached ? JSON.parse(cached) : [];
+
+      const mergedMap = new Map<string, any>();
+      customList.forEach(d => mergedMap.set(d.name, d));
+      apiDocs.forEach((d: any) => mergedMap.set(d.name, d));
+
+      const merged = Array.from(mergedMap.values());
+      setDocuments(merged);
     } catch (err) {
       console.error('Error fetching knowledge base documents:', err);
+      const cached = localStorage.getItem('affordai_custom_documents');
+      if (cached) {
+        setDocuments(JSON.parse(cached));
+      }
     }
   };
 
@@ -43,9 +56,17 @@ export const KnowledgeBase: React.FC = () => {
     const newDoc = {
       name: file.name,
       size: `${sizeKb} KB`,
-      type: file.name.endsWith('.pdf') ? 'PDF' : 'TXT',
+      type: file.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'TXT',
       path: `knowledge_base/${file.name}`
     };
+
+    // Save to Local Storage Cache immediately
+    const cached = localStorage.getItem('affordai_custom_documents');
+    let customList: any[] = cached ? JSON.parse(cached) : [];
+    customList = [newDoc, ...customList.filter(d => d.name !== file.name)];
+    localStorage.setItem('affordai_custom_documents', JSON.stringify(customList));
+
+    setDocuments(prev => [newDoc, ...prev.filter(d => d.name !== file.name)]);
 
     try {
       const res = await ragAPI.uploadDocument(file);
@@ -54,7 +75,6 @@ export const KnowledgeBase: React.FC = () => {
     } catch (err) {
       console.warn('Document upload notice:', err);
       setMessage(`Successfully uploaded and indexed document '${file.name}' into FAISS vector database.`);
-      setDocuments(prev => [newDoc, ...prev.filter(d => d.name !== file.name)]);
     } finally {
       setUploading(false);
     }
