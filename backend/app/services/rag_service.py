@@ -71,7 +71,10 @@ class RAGService:
                 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
             from langchain_community.vectorstores import FAISS
-            from langchain_community.embeddings import HuggingFaceEmbeddings
+            try:
+                from langchain_huggingface import HuggingFaceEmbeddings
+            except ImportError:
+                from langchain_community.embeddings import HuggingFaceEmbeddings
 
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
             all_chunks = []
