@@ -20,6 +20,8 @@ interface DashboardProps {
   setActiveTab: (tab: string) => void;
 }
 
+import { getUserStorageKey } from '../utils/storage';
+
 export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
@@ -29,6 +31,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
   useEffect(() => {
     const fetchData = async () => {
       let custs: Customer[] = [];
+      const custKey = getUserStorageKey('affordai_custom_customers');
       try {
         const [anRes, custRes] = await Promise.all([
           analyticsAPI.getAnalytics(),
@@ -37,7 +40,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         setAnalytics(anRes.data);
 
         const apiCusts = custRes.data || [];
-        const cached = localStorage.getItem('affordai_custom_customers');
+        const cached = localStorage.getItem(custKey);
         let customList: Customer[] = cached ? JSON.parse(cached) : [];
 
         const mergedMap = new Map<string | number, Customer>();
@@ -49,7 +52,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
         );
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
-        const cached = localStorage.getItem('affordai_custom_customers');
+        const custKey = getUserStorageKey('affordai_custom_customers');
+        const cached = localStorage.getItem(custKey);
         if (cached) {
           custs = JSON.parse(cached);
         }
@@ -69,7 +73,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
     ['Interested', 'Wants Callback', 'EMI Query', 'Eligibility Query', 'KYC Query'].includes(c.interest_status)
   ).length;
 
-  const cachedFollowups = localStorage.getItem('affordai_custom_followups');
+  const fupKey = getUserStorageKey('affordai_custom_followups');
+  const cachedFollowups = localStorage.getItem(fupKey);
   const customFollowups = cachedFollowups ? JSON.parse(cachedFollowups) : [];
   const pendingFollowupsList = customFollowups.filter((f: any) => f.status === 'Pending');
   const pendingFollowupCount = pendingFollowupsList.length > 0 

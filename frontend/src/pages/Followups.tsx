@@ -13,6 +13,8 @@ import {
 import { followupAPI, crmAPI } from '../services/api';
 import { Followup, Customer } from '../types';
 
+import { getUserStorageKey } from '../utils/storage';
+
 export const Followups: React.FC = () => {
   const [followups, setFollowups] = useState<Followup[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -27,13 +29,15 @@ export const Followups: React.FC = () => {
   const [notes, setNotes] = useState<string>('');
 
   const fetchData = async () => {
+    const custKey = getUserStorageKey('affordai_custom_customers');
+    const fupKey = getUserStorageKey('affordai_custom_followups');
     try {
       const [fRes, cRes] = await Promise.all([
         followupAPI.getFollowups(),
         crmAPI.getCustomers(),
       ]);
       const apiCusts = cRes.data || [];
-      const cachedCusts = localStorage.getItem('affordai_custom_customers');
+      const cachedCusts = localStorage.getItem(custKey);
       let customCustList: Customer[] = cachedCusts ? JSON.parse(cachedCusts) : [];
       
       const mergedCustMap = new Map<string | number, Customer>();
@@ -44,7 +48,7 @@ export const Followups: React.FC = () => {
       setCustomers(mergedCusts);
 
       // Merge Followups with Local Storage
-      const cachedFollowups = localStorage.getItem('affordai_custom_followups');
+      const cachedFollowups = localStorage.getItem(fupKey);
       let customFollowupList: Followup[] = cachedFollowups ? JSON.parse(cachedFollowups) : [];
 
       const mergedFupsMap = new Map<string | number, Followup>();
@@ -59,13 +63,13 @@ export const Followups: React.FC = () => {
       }
     } catch (err) {
       console.error('Error loading follow-ups:', err);
-      const cachedCusts = localStorage.getItem('affordai_custom_customers');
+      const cachedCusts = localStorage.getItem(custKey);
       if (cachedCusts) {
         const customCustList: Customer[] = JSON.parse(cachedCusts);
         setCustomers(customCustList);
         if (customCustList.length > 0) setCustomerId(customCustList[0].id);
       }
-      const cachedFollowups = localStorage.getItem('affordai_custom_followups');
+      const cachedFollowups = localStorage.getItem(fupKey);
       if (cachedFollowups) {
         setFollowups(JSON.parse(cachedFollowups));
       }
@@ -79,9 +83,10 @@ export const Followups: React.FC = () => {
   }, []);
 
   const handleToggleStatus = async (id: number) => {
+    const fupKey = getUserStorageKey('affordai_custom_followups');
     setFollowups(prev => {
       const updated = prev.map(f => f.id === id ? { ...f, status: (f.status === 'Pending' ? 'Completed' : 'Pending') as any } : f);
-      localStorage.setItem('affordai_custom_followups', JSON.stringify(updated));
+      localStorage.setItem(fupKey, JSON.stringify(updated));
       return updated;
     });
     try {
@@ -110,10 +115,11 @@ export const Followups: React.FC = () => {
     };
 
     // Save to Local Storage Cache
-    const cachedFollowups = localStorage.getItem('affordai_custom_followups');
+    const fupKey = getUserStorageKey('affordai_custom_followups');
+    const cachedFollowups = localStorage.getItem(fupKey);
     let customFollowupList: Followup[] = cachedFollowups ? JSON.parse(cachedFollowups) : [];
     customFollowupList = [newFollowup, ...customFollowupList];
-    localStorage.setItem('affordai_custom_followups', JSON.stringify(customFollowupList));
+    localStorage.setItem(fupKey, JSON.stringify(customFollowupList));
 
     setFollowups(prev => [newFollowup, ...prev]);
     setIsModalOpen(false);

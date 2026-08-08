@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { crmAPI } from '../services/api';
 import { Customer } from '../types';
+import { getUserStorageKey } from '../utils/storage';
 
 export const Customers: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -42,9 +43,10 @@ export const Customers: React.FC = () => {
   });
 
   const fetchCustomers = async () => {
+    const storageKey = getUserStorageKey('affordai_custom_customers');
     try {
       const res = await crmAPI.getCustomers();
-      const cached = localStorage.getItem('affordai_custom_customers');
+      const cached = localStorage.getItem(storageKey);
       let customList: Customer[] = cached ? JSON.parse(cached) : [];
       
       const mergedMap = new Map<string | number, Customer>();
@@ -59,7 +61,7 @@ export const Customers: React.FC = () => {
       setFilteredCustomers(merged);
     } catch (err) {
       console.error('Error loading customers:', err);
-      const cached = localStorage.getItem('affordai_custom_customers');
+      const cached = localStorage.getItem(storageKey);
       if (cached) {
         setCustomers(JSON.parse(cached));
       }
@@ -142,14 +144,15 @@ export const Customers: React.FC = () => {
     };
 
     // 1. Update localStorage cache so it's persisted across tab switches
-    const cached = localStorage.getItem('affordai_custom_customers');
+    const storageKey = getUserStorageKey('affordai_custom_customers');
+    const cached = localStorage.getItem(storageKey);
     let customList: Customer[] = cached ? JSON.parse(cached) : [];
     if (selectedCustomer) {
       customList = customList.map(c => c.id === selectedCustomer.id ? newCustomerObj : c);
     } else {
       customList = [newCustomerObj, ...customList];
     }
-    localStorage.setItem('affordai_custom_customers', JSON.stringify(customList));
+    localStorage.setItem(storageKey, JSON.stringify(customList));
 
     // 2. Update local React state immediately
     if (selectedCustomer) {
@@ -168,7 +171,7 @@ export const Customers: React.FC = () => {
         if (res.data?.id) {
           const realCustomer = { ...newCustomerObj, id: res.data.id };
           customList = customList.map(c => c.id === tempId ? realCustomer : c);
-          localStorage.setItem('affordai_custom_customers', JSON.stringify(customList));
+          localStorage.setItem(storageKey, JSON.stringify(customList));
           setCustomers(prev => prev.map(c => c.id === tempId ? realCustomer : c));
         }
       }
@@ -179,11 +182,12 @@ export const Customers: React.FC = () => {
 
   const handleDeleteCustomer = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this customer record?')) {
-      const cached = localStorage.getItem('affordai_custom_customers');
+      const storageKey = getUserStorageKey('affordai_custom_customers');
+      const cached = localStorage.getItem(storageKey);
       if (cached) {
         const customList: Customer[] = JSON.parse(cached);
         const updated = customList.filter(c => c.id !== id);
-        localStorage.setItem('affordai_custom_customers', JSON.stringify(updated));
+        localStorage.setItem(storageKey, JSON.stringify(updated));
       }
       setCustomers(prev => prev.filter(c => c.id !== id));
       try {

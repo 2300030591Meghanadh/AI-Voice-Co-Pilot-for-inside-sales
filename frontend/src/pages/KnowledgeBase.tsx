@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { ragAPI } from '../services/api';
 
+import { getUserStorageKey } from '../utils/storage';
+
 export const KnowledgeBase: React.FC = () => {
   const [documents, setDocuments] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -20,10 +22,11 @@ export const KnowledgeBase: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any>(null);
 
   const fetchDocuments = async () => {
+    const docKey = getUserStorageKey('affordai_custom_documents');
     try {
       const res = await ragAPI.listDocuments();
       const apiDocs = res.data || [];
-      const cached = localStorage.getItem('affordai_custom_documents');
+      const cached = localStorage.getItem(docKey);
       let customList: any[] = cached ? JSON.parse(cached) : [];
 
       const mergedMap = new Map<string, any>();
@@ -34,7 +37,7 @@ export const KnowledgeBase: React.FC = () => {
       setDocuments(merged);
     } catch (err) {
       console.error('Error fetching knowledge base documents:', err);
-      const cached = localStorage.getItem('affordai_custom_documents');
+      const cached = localStorage.getItem(docKey);
       if (cached) {
         setDocuments(JSON.parse(cached));
       }
@@ -61,10 +64,11 @@ export const KnowledgeBase: React.FC = () => {
     };
 
     // Save to Local Storage Cache immediately
-    const cached = localStorage.getItem('affordai_custom_documents');
+    const docKey = getUserStorageKey('affordai_custom_documents');
+    const cached = localStorage.getItem(docKey);
     let customList: any[] = cached ? JSON.parse(cached) : [];
     customList = [newDoc, ...customList.filter(d => d.name !== file.name)];
-    localStorage.setItem('affordai_custom_documents', JSON.stringify(customList));
+    localStorage.setItem(docKey, JSON.stringify(customList));
 
     setDocuments(prev => [newDoc, ...prev.filter(d => d.name !== file.name)]);
 
